@@ -1,0 +1,9 @@
+{
+  "lava": {
+    "collide": false,
+    "breakable": false
+  },
+  "barrier": {
+    "breakable": false
+  }
+}
