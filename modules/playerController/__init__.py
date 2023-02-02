@@ -1,8 +1,10 @@
 #imports
 import math
+import time
 import modules.blockClass as blockClass
 import modules.entityClass as entityClass
 import modules.renderDistance as renderDistance
+import modules.raycastUtility as raycastUtility
 
 #class
 lastData = [0, 0]
@@ -14,6 +16,11 @@ class Controller:
         self.mouseY = 0
         self.screen = screen
         self.selectedBlock = "stone"
+        self.SCORE_DIAMONDS = 0
+        self.SCORE_TIME = 0
+        self.SCORE_KILLS = 0
+        self.TOTAL_SCORE = 0
+        self.start_time = time.time()
     def update(self, data):
         #health check
         if self.entity.health == 0:
@@ -44,6 +51,17 @@ class Controller:
             self.entity.stop()
             self.entity.animation = None
 
+        #scorekeeping
+        for entity in renderDistance.LOADED_ENTITIES:
+            if entity.type == "diamond":
+                if entityClass.collide(self.entity, [entity]):
+                    entity.delete()
+                    self.SCORE_DIAMONDS += 1
+        if self.entity.health > 0:
+            self.SCORE_TIME = round((time.time() - self.start_time)/180)
+        self.TOTAL_SCORE = self.SCORE_DIAMONDS*2+self.SCORE_TIME+self.SCORE_KILLS*2
+                    
+
         global lastData
         lastData = [x,y]
     def jump(self, data):
@@ -59,8 +77,17 @@ class Controller:
         self.entity.animationFrame = 1
         self.entity.animation = "hit"
         result = self.raycast()
-        if result and result.breakable :
+        if result and result.breakable:
+            if result.type == "diamond_ore":
+                entityClass.Entity("diamond", result.x, result.y)
             result.delete()
+
+        #attack
+        result = raycastUtility.raycast(self.entity, "zombie")
+        if result:
+            result.applyDamage(self.entity)
+            if result.type == "zombie" and result.health == 0:
+                self.SCORE_KILLS += 1
     def RMB(self):
         #health check
         if self.entity.health == 0:

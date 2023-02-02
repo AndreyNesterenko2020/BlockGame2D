@@ -80,5 +80,88 @@
         "once": false
       }
     }
+  },
+  "zombie": {
+    "health": 10,
+    "damage": 1,
+    "speed": 1,
+    "jumpVel": 5,
+    "reach": 3.5,
+    "hitbox": {
+      "x": 1,
+      "y": 2
+    },
+    "texture": {
+      "size": {
+        "x": 1.5,
+        "y": 2 
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "head": {
+      "size": {
+        "x": 0.5,
+        "y": 0.5 
+      },
+      "position": {
+        "x": 0,
+        "y": 0.6
+      }
+    },
+    "animations": {
+      "walk": {
+        "frames": 10,
+        "frameduration": 4,
+        "once": false
+      },
+      "hit": {
+        "frames": 8,
+        "frameduration": 2,
+        "once": true
+      },
+      "hurt": {
+        "frames": 4,
+        "frameduration": 1,
+        "once": true
+      },
+      "death": {
+        "frames": 8,
+        "frameduration": 5,
+        "once": true
+      },
+      "idle": {
+        "frames": 1,
+        "frameduration": 10,
+        "once": false
+      }
+    }
+  },
+  "diamond": {
+    "health": 2,
+    "damage": 1,
+    "speed": 1,
+    "jumpVel": 1,
+    "reach": 1,
+    "hitbox": {
+      "x": 1,
+      "y": 1
+    },
+    "texture": {
+      "size": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "position": {
+        "x": 0.0625,
+        "y": -0.0625
+      }
+    },
+    "head": false,
+    "animations": {
+    
+    }
   }
 }

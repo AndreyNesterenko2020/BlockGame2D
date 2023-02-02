@@ -14,12 +14,14 @@ import modules.playerController as playerController
 import modules.UI as UI
 
 #version number
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 #pygame setup
 pygame.init()
 size = [920, 600]
 screen = pygame.display.set_mode(size)
+pygame.display.set_caption("BlockGame2D v"+VERSION)
+pygame.display.set_icon(textureLoader.LOAD_TEXTURE("assets/textures/UI/icon.png"))
 
 #variables
 delta = 0
@@ -30,7 +32,7 @@ player = entityClass.Entity("player", 0, worldGeneration.getHeight(0)+2)
 controller = playerController.Controller(player, screen)
 
 #initialize UI
-UI.initialize(player, screen)
+UI.initialize(player, screen, controller)
 
 #create clock
 clock = pygame.time.Clock()

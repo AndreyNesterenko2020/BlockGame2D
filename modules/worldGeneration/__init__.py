@@ -33,3 +33,12 @@ def UPDATE(player):
             GENERATED_WORLD.append(x)
             if random.randint(1, 64) == 1:
                 entityClass.Entity("cow", x, getHeight(x)+3)
+            if random.randint(1, 72) == 1 and (x > 16 or x < -16):
+                entityClass.Entity("zombie", x, getHeight(x)+3)
+            if random.randint(1, 80) == 1 and (x > 32 or x < -32):
+                for i in range(2, random.randint(2, 8)):
+                    entityClass.Entity("zombie", x+i, getHeight(x+i)+3)
+            if random.randint(1, 16) == 1:
+                random_ = random.randint(3, getHeight(x)-10)
+                blockClass.exists(x, random_) and blockClass.exists(x, random_).delete()
+                blockClass.Block(x, random_, "diamond_ore")

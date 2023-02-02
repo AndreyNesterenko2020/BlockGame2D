@@ -1,5 +1,8 @@
 #imports
+import os
+import sys
 import math
+import time
 import random
 import pygame
 import modules.textureLoader as textureLoader
@@ -8,7 +11,7 @@ import modules.textureLoader as textureLoader
 blockKeys = ["stone", "dirt", "planks", "log"]
 buttons = []
 
-def initialize(player, screen):
+def initialize(player, screen, controller):
     global heart_full
     heart_full = textureLoader.LOAD_TEXTURE("assets/textures/UI/heart_full.png", 25, 25)
     global heart_half
@@ -22,10 +25,23 @@ def initialize(player, screen):
     global death
     death = createText("You died!")
     global respawn_button
+    global quit_button
     def respawn():
         player.respawn()
         respawn_button.visible = False
-    respawn_button = Button(text="respawn", width=80, height=40, centered=True, x=screen.get_size()[0]/2-35, y=200, command=respawn, visible=False)
+        quit_button.visible = False
+        controller.SCORE_DIAMONDS = 0
+        controller.start_time = time.time()
+        controller.SCORE_KILLS = 0
+    def save_and_quit():
+        score = getHighScore()
+        if controller.TOTAL_SCORE > int(score):
+            SCORE_FILE = open(os.path.dirname(__file__) + "/../../../SCORE_DATA.txt", "w")
+            SCORE_FILE.write(str(controller.TOTAL_SCORE))
+            SCORE_FILE.close()
+        sys.exit()
+    respawn_button = Button(text="respawn", width=140, height=40, centered=True, x=screen.get_size()[0]/2-70, y=315, command=respawn, visible=False)
+    quit_button = Button(text="save and quit", width=140, height=40, centered=True, x=screen.get_size()[0]/2-70, y=365, command=save_and_quit, visible=False)
 
 def createText(text, size=32, color="#ffffff"):
     font = pygame.font.Font("assets/font/blockbuilder3D.ttf", size)
@@ -79,17 +95,28 @@ def renderHearts(player, screen):
         else:
             screen.blit(heart_empty, (25*x,player.health <= 2 and random.randint(-2, 2)))
 
-def renderDeathScreen(player, screen):
+def renderDeathScreen(player, screen, controller):
     screen.blit(death_screen, (0, 0))
     screen.blit(death, (screen.get_size()[0]/2-death.get_rect().width/2, 100))
     respawn_button.visible = True
+    quit_button.visible = True
+    text1 = createText(text="Score: "+str(controller.TOTAL_SCORE), size=18)
+    screen.blit(text1, (screen.get_size()[0]/2-text1.get_rect().width/2, 170))
+    text2 = createText(text="Diamonds Collected: "+str(controller.SCORE_DIAMONDS)+" ("+str(controller.SCORE_DIAMONDS*2)+" points)", size=18)
+    screen.blit(text2, (screen.get_size()[0]/2-text2.get_rect().width/2, 195))
+    text3 = createText(text="Zombies Killed: "+str(controller.SCORE_KILLS)+" ("+str(controller.SCORE_KILLS*2)+" points)", size=18)
+    screen.blit(text3, (screen.get_size()[0]/2-text3.get_rect().width/2, 220))
+    text4 = createText(text="Time Survived: "+str(controller.SCORE_TIME*3)+" minutes ("+str(controller.SCORE_TIME)+" points)", size=18)
+    screen.blit(text4, (screen.get_size()[0]/2-text4.get_rect().width/2, 245))
+    text5 = createText(text="High Score: "+str(getHighScore()), size=18)
+    screen.blit(text5, (screen.get_size()[0]/2-text5.get_rect().width/2, 270))
 
 def update(player, screen, keys, controller):
     checkKeys(keys, controller)
     renderHearts(player, screen)
     renderSelection(controller, screen)
     if player.health == 0:
-        renderDeathScreen(player, screen)
+        renderDeathScreen(player, screen, controller)
     for button in buttons:
         button.visible and button.render(screen)
 
@@ -105,3 +132,13 @@ def checkKeys(keys, controller):
 def renderSelection(controller, screen):
     text = createText(text="Selected block: "+controller.selectedBlock, size=16, color="black")
     screen.blit(text, (screen.get_size()[0]-180, 8))
+
+def getHighScore():
+    score = 0
+    try:
+        SCORE_FILE_READ = open(os.path.dirname(__file__) + "/../../../SCORE_DATA.txt", "r")
+        score = int(SCORE_FILE_READ.read())
+        SCORE_FILE_READ.close()
+    except:
+        "do nothing"
+    return score
